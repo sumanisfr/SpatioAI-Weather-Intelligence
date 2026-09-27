@@ -1,0 +1,21 @@
+{
+  "threshold": 54.42262649536133,
+  "max_probability": 0.20000000298023224,
+  "mean_probability": 0.00012624668306671083,
+  "max_predicted_intensity": 19.908580780029297,
+  "affected_area_km2": 0.0,
+  "uncertainty_mean": 1.417049527168274,
+  "uncertainty_max": 34.07960510253906,
+  "risk_score": 0.0,
+  "event_id": "EV_SYNTH_001_01",
+  "track_id": "TRK_SYNTH_001",
+  "timestamp": "2024-07-01 00:00:00",
+  "centroid_lat": 21.287472582671562,
+  "centroid_lon": 79.02205503603284,
+  "bbox": [
+    19.287471771240234,
+    23.287471771240234,
+    77.02205657958984,
+    81.02205657958984
+  ]
+}

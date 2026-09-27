@@ -1,0 +1,258 @@
+project:
+  name: "SpatioAI"
+  version: "0.1.0"
+  description: "AI-Driven Spatio-Temporal Tracking of Extreme Weather Anomalies"
+
+region:
+  name: "India_Eastern_Region"
+  lat_min: 5.0
+  lat_max: 30.0
+  lon_min: 65.0
+  lon_max: 100.0
+
+variables:
+  - precipitation
+  - temperature
+  - u10
+  - v10
+  - surface_pressure
+
+data:
+  raw_dir: "data/raw"
+  interim_dir: "data/interim"
+  processed_dir: "data/processed"
+  climatology_dir: "data/climatology"
+  events_dir: "data/events"
+  zarr_dir: "data/zarr"
+
+processing:
+  target_resolution_km: 12
+  chunk_size:
+    time: 10
+    latitude: 50
+    longitude: 50
+  regrid_method: "linear"
+
+time:
+  frequency: "6h"
+  start_date: "2024-01-01"
+  end_date: "2024-01-15"
+
+units:
+  temperature: "K"
+  precipitation: "mm"
+  u10: "m/s"
+  v10: "m/s"
+  surface_pressure: "hPa"
+
+climatology:
+  enabled: true
+  variables:
+    precipitation:
+      statistics:
+        - mean
+        - std
+        - median
+        - p90
+        - p95
+        - p99
+    temperature:
+      statistics:
+        - mean
+        - std
+        - p90
+        - p95
+  grouping:
+    method: "month_hour" # Options: "dayofyear_hour", "dayofyear", "month_hour", "month", "all"
+  minimum_samples: 1
+
+anomaly:
+  precipitation:
+    method: "standardized" # Options: "standardized", "absolute", "percentile"
+    standardized_threshold: 2.0 # z >= 2.0 (standard deviations above normal)
+    percentile_threshold: 95 # e.g. 95th percentile
+    absolute_threshold_mm: 50.0 # absolute rainfall threshold (mm/timestep)
+  temperature:
+    method: "standardized"
+    standardized_threshold: 2.0
+
+events:
+  variable: "precipitation"
+  detection_method: "percentile" # Options: "percentile", "standardized", "absolute"
+  percentile_level: "p95" # Reference percentile statistic name in climatology
+  standardized_z_min: 2.0
+  absolute_min_val: 25.0 # mm
+  connectivity: 8 # 4 or 8 neighborhood connectivity
+  minimum_cells: 4 # Minimum grid cells to qualify as candidate event
+  minimum_area_km2: 50.0 # Minimum geographic area in sq km
+  output_format: "parquet" # "parquet" or "csv"
+
+tracking:
+  enabled: true
+  algorithm: "hungarian" # "hungarian" or "greedy"
+  max_centroid_distance_km: 500.0 # Maximum geographic displacement between steps
+  max_speed_kmh: 120.0 # Maximum plausible propagation velocity
+  max_area_change_ratio: 5.0 # Maximum allowed size ratio
+  max_missed_steps: 1 # Number of consecutive missed detection steps before track termination
+  cost_threshold: 0.85 # Maximum association cost to accept a match
+  use_kalman: false # Optional linear Kalman filter motion predictor
+  weights:
+    weight_distance: 0.50
+    weight_bbox: 0.20
+    weight_area: 0.15
+    weight_intensity: 0.15
+  output_format: "parquet" # "parquet" or "csv"
+
+gnn:
+  enabled: true
+  graph:
+    max_distance_km: 500.0
+    max_time_gap_hours: 12.0
+    min_time_gap_hours: 0.1
+    max_speed_kmh: 150.0
+    max_area_change_ratio: 6.0
+    k_nearest_neighbors: 5
+  model:
+    node_in_dim: 15
+    edge_in_dim: 9
+    hidden_dim: 128
+    num_layers: 3
+    dropout: 0.2
+    conv_type: "sage"
+  training:
+    epochs: 50
+    learning_rate: 0.001
+    weight_decay: 0.0001
+    batch_size: 16
+    patience: 10
+    grad_clip_norm: 1.0
+  loss:
+    type: "bce_weighted" # "bce_weighted", "bce", or "focal"
+    positive_weight: 3.0
+    focal_alpha: 0.75
+    focal_gamma: 2.0
+  inference:
+    association_threshold: 0.50
+  split:
+    method: "track" # "track" or "temporal"
+    train_ratio: 0.70
+    val_ratio: 0.15
+  checkpoints_dir: "models"
+  best_model_name: "spatiotemporal_gnn_best.pt"
+
+downscaling:
+  enabled: true
+  variable: "precipitation"
+  input_resolution_km: 12.0
+  target_resolution_km: 5.0
+  crop:
+    padding_deg: 1.0
+    crop_size_deg: 4.0
+  interpolation:
+    default_method: "bilinear"
+  model:
+    name: "unet"
+    in_channels: 1
+    out_channels: 1
+    base_channels: 32
+    residual_learning: true
+    output_activation: "softplus"
+  training:
+    batch_size: 4
+    epochs: 30
+    learning_rate: 0.001
+    weight_decay: 0.0001
+    patience: 8
+    loss:
+      name: "weighted_mse"
+      extreme_percentile: 95.0
+      extreme_weight: 3.0
+      gradient_weight: 0.05
+  split:
+    method: "track"
+    train_ratio: 0.70
+    val_ratio: 0.15
+  evaluation:
+    percentiles: [95.0, 99.0]
+  paths:
+    dataset_dir: "data/downscaling"
+    output_dir: "data/outputs/downscaling"
+    model_checkpoint: "models/downscaler_unet_best.pt"
+
+diffusion:
+  enabled: true
+  variable: "precipitation"
+  timesteps: 100
+  beta_schedule: "cosine"
+  transform:
+    name: "log1p"
+  model:
+    base_channels: 32
+    condition_channels: 1
+    target_channels: 1
+  loss:
+    extreme_enabled: true
+    extreme_percentile: 95.0
+    extreme_weight: 2.0
+  training:
+    batch_size: 4
+    epochs: 50
+    learning_rate: 0.0001
+    weight_decay: 0.0001
+    gradient_clip: 1.0
+  sampling:
+    num_steps: 100
+    num_samples: 5
+  paths:
+    model_checkpoint: "models/diffusion_downscaler_best.pt"
+    output_dir: "data/outputs/downscaling"
+
+physics:
+  enabled: true
+  weight: 0.05
+  extreme_percentile: 95.0
+  weights:
+    non_negative: 0.5
+    coarse_consistency: 1.0
+    mass_conservation: 0.5
+    gradient: 0.1
+    extreme_structure: 1.0
+  moisture:
+    enabled: false
+
+ensemble:
+  enabled: true
+  num_samples: 5
+  statistics:
+    quantiles: [0.05, 0.25, 0.50, 0.75, 0.95, 0.99]
+
+risk:
+  enabled: true
+  threshold_mode: "fixed"
+  thresholds:
+    precipitation: [25.0, 50.0, 100.0, 150.0]
+  probability_threshold: 0.5
+  severity:
+    normalization: "threshold_ratio"
+  area:
+    minimum_km2: 0.0
+    score_scale_km2: 1000.0
+  outputs:
+    directory: "data/outputs/risk"
+
+api:
+  host: "127.0.0.1"
+  port: 8000
+  demo_mode: true
+  cors_origins:
+    - "http://localhost:5173"
+    - "http://127.0.0.1:5173"
+
+models:
+  gnn_checkpoint: "models/spatiotemporal_gnn_best.pt"
+  unet_checkpoint: "models/downscaler_unet_best.pt"
+  diffusion_checkpoint: "models/diffusion_downscaler_best.pt"
+  physics_diffusion_checkpoint: "models/diffusion_physics_ablation.pt"
+
+inference:
+  device: "auto"
