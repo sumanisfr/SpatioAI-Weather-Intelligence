@@ -34,11 +34,11 @@ type MapPanelProps = {
 
 type TileMode = 'dark' | 'satellite' | 'street'
 
-// Basin coordinates
+// Meteorological Basin Focus Coordinates (Calibrated for Indian Subcontinent & Bay of Bengal)
 const BASIN_COORDS: Record<string, { center: [number, number]; zoom: number }> = {
-  subcontinent: { center: [20.5, 83.0], zoom: 5 },
-  bay_of_bengal: { center: [16.0, 89.0], zoom: 6 },
-  peninsular: { center: [13.5, 78.5], zoom: 6 },
+  subcontinent: { center: [19.5, 82.5], zoom: 5 },
+  bay_of_bengal: { center: [17.0, 88.5], zoom: 6 },
+  peninsular: { center: [14.0, 77.5], zoom: 6 },
 }
 
 function ViewportManager({
@@ -55,8 +55,13 @@ function ViewportManager({
   const prevBasinRef = useRef<string | undefined>(activeBasin)
 
   useEffect(() => {
+    // Invalidate map size on initial mount and resize
+    map.invalidateSize()
+  }, [map])
+
+  useEffect(() => {
     if (targetOverride) {
-      map.flyTo(targetOverride.center, targetOverride.zoom, { duration: 0.9, easeLinearity: 0.25 })
+      map.flyTo(targetOverride.center, targetOverride.zoom, { duration: 0.8, easeLinearity: 0.25 })
       return
     }
 
@@ -65,7 +70,7 @@ function ViewportManager({
       prevBasinRef.current = activeBasin
       if (activeBasin && BASIN_COORDS[activeBasin]) {
         const b = BASIN_COORDS[activeBasin]
-        map.flyTo(b.center, b.zoom, { duration: 0.9, easeLinearity: 0.25 })
+        map.flyTo(b.center, b.zoom, { duration: 0.8, easeLinearity: 0.25 })
         return
       }
     }
@@ -73,7 +78,7 @@ function ViewportManager({
     const eventChanged = event && event.event_id !== prevEventIdRef.current
     if (eventChanged && event) {
       prevEventIdRef.current = event.event_id
-      map.flyTo([event.centroid_lat, event.centroid_lon], 6.5, { duration: 0.8, easeLinearity: 0.25 })
+      map.flyTo([event.centroid_lat, event.centroid_lon], 6, { duration: 0.8, easeLinearity: 0.25 })
     }
   }, [event, activeBasin, targetOverride, map])
 
@@ -185,11 +190,18 @@ export function MapPanel({
         <MapContainer
           center={center}
           zoom={event ? 6 : 5}
+          minZoom={4}
+          maxZoom={16}
+          maxBounds={[
+            [-5.0, 50.0],
+            [40.0, 115.0],
+          ]}
+          maxBoundsViscosity={0.75}
           scrollWheelZoom={true}
           className="leaflet-dark-container"
         >
           {/* Base Tiles (Esri Dark Canvas by default) */}
-          <TileLayer attribution={currentTiles.attr} url={currentTiles.base} maxZoom={16} />
+          <TileLayer attribution={currentTiles.attr} url={currentTiles.base} maxZoom={16} minZoom={4} />
 
           {/* Reference Labels (Crisp geographical names) */}
           {currentTiles.labels && (
