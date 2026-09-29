@@ -1,10 +1,11 @@
 import type { ApiError } from '../types/api'
 
-export const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/$/, '') ?? 'http://localhost:8000'
+const defaultHost = typeof window !== 'undefined' && window.location.hostname ? window.location.hostname : '127.0.0.1'
+export const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/$/, '') ?? `http://${defaultHost}:8000`
 
 export async function apiFetch<T>(path: string, options: RequestInit = {}): Promise<T> {
   const controller = new AbortController()
-  const timeout = window.setTimeout(() => controller.abort(), 15000)
+  const timeout = globalThis.setTimeout(() => controller.abort(), 15000)
   try {
     const response = await fetch(`${API_BASE_URL}${path}`, { ...options, signal: options.signal ?? controller.signal })
     const body = await response.json().catch(() => ({})) as { detail?: string }
@@ -15,6 +16,6 @@ export async function apiFetch<T>(path: string, options: RequestInit = {}): Prom
     }
     return body as T
   } finally {
-    window.clearTimeout(timeout)
+    globalThis.clearTimeout(timeout)
   }
 }

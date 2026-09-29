@@ -5,8 +5,16 @@ import torch
 from fastapi.testclient import TestClient
 
 from api.main import app
+from src.downscaling.cnn import UNetDownscaler
 from src.downscaling.diffusion import ConditionalDiffusionUNet, DiffusionProcess
+from src.downscaling.inference import DownscalingPredictor
 from src.gnn.dataset import generate_synthetic_event_sequence
+
+
+class DummyGNN:
+    def predict_events(self, events):
+        ids = [e.get("event_id", f"ev_{i}") for i, e in enumerate(events)]
+        return {"predicted_tracks": [ids] if ids else [], "edge_predictions": []}
 
 
 @pytest.fixture(scope="module")
@@ -14,8 +22,23 @@ def client():
     test_client = TestClient(app)
     test_client.__enter__()
     registry = app.state.registry
-    registry.models["diffusion"] = {"model": ConditionalDiffusionUNet(base_channels=4), "process": DiffusionProcess(2, "linear")}
+
+    # 1. Diffusion mock
+    registry.models["diffusion"] = {
+        "model": ConditionalDiffusionUNet(base_channels=4),
+        "process": DiffusionProcess(2, "linear"),
+    }
     registry.models["diffusion"]["model"].eval()
+    registry.statuses["diffusion"] = {"available": True, "loaded": True, "path": "mock"}
+
+    # 2. U-Net mock
+    registry.models["unet"] = DownscalingPredictor(model=UNetDownscaler(base_channels=4))
+    registry.statuses["unet"] = {"available": True, "loaded": True, "path": "mock"}
+
+    # 3. GNN mock
+    registry.models["gnn"] = DummyGNN()
+    registry.statuses["gnn"] = {"available": True, "loaded": True, "path": "mock"}
+
     yield test_client
     test_client.__exit__(None, None, None)
 
