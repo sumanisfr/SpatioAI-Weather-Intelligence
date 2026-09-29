@@ -82,7 +82,13 @@ export function App() {
             <Sidebar
               events={data.events}
               selectedId={data.selectedId}
-              onSelectEvent={data.setSelectedId}
+              onSelectEvent={(id) => {
+                data.setSelectedId(id)
+                // On mobile screens (<768px), auto-collapse drawer when user picks an event
+                if (window.innerWidth <= 768) {
+                  setSidebarCollapsed(true)
+                }
+              }}
               loading={data.loading}
               error={data.error}
               extremeOnly={extremeOnly}
@@ -92,6 +98,15 @@ export function App() {
             />
           </ErrorBoundary>
         </div>
+
+        {/* Mobile Backdrop Overlay */}
+        {!sidebarCollapsed && (
+          <div
+            className="sidebar-mobile-backdrop"
+            onClick={() => setSidebarCollapsed(true)}
+            aria-hidden="true"
+          />
+        )}
 
         {/* Center / Right Analysis Console */}
         <main className="workspace-content-pane" role="main">

@@ -2313,35 +2313,222 @@
 .rounded      { border-radius: 6px; }
 
 /* ============================================================
-   18. RESPONSIVE BREAKPOINTS
+   18. RESPONSIVE BREAKPOINTS (Mobile & Desktop Optimization)
    ============================================================ */
+
+/* Mobile backdrop overlay for sidebar drawer */
+.sidebar-mobile-backdrop {
+  display: none;
+}
+
 @media (max-width: 1200px) {
-  .kpi-ribbon { grid-template-columns: repeat(2, 1fr); }
-  .dock-grid-2col { grid-template-columns: 1fr; }
-  .analytics-dock-toolbar { flex-direction: column; align-items: flex-start; }
-  .dock-tabs-group { flex-wrap: wrap; }
+  .kpi-ribbon {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 10px 16px;
+    gap: 10px;
+  }
+  .dock-grid-2col {
+    grid-template-columns: 1fr;
+    padding: 10px 16px;
+  }
+  .analytics-dock-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 16px;
+  }
+  .dock-tabs-group {
+    flex-wrap: wrap;
+    width: 100%;
+  }
 }
 
-@media (max-width: 900px) {
-  .workspace-sidebar-pane { width: 260px; }
-  .header-nav-section { display: none; }
-  .kpi-ribbon { padding: 10px; gap: 8px; }
+@media (max-width: 992px) {
+  .workspace-sidebar-pane {
+    width: 280px;
+  }
+  .header-nav-section {
+    display: none;
+  }
+  .brand-tagline {
+    display: none;
+  }
+  .site-header {
+    padding: 0 14px;
+    height: 52px;
+  }
 }
 
-@media (max-width: 680px) {
-  .kpi-ribbon { grid-template-columns: 1fr 1fr; }
-  .workspace-sidebar-pane { position: absolute; z-index: 500; height: 100%; }
-  .site-header { padding: 0 12px; }
-  .dock-grid-2col { padding: 10px 12px; gap: 10px; }
-  .detail-stat-grid { grid-template-columns: 1fr; }
-  .risk-metrics-grid { grid-template-columns: 1fr 1fr; }
-  .station-readouts-grid { grid-template-columns: 1fr 1fr; }
-  .header-actions-section { gap: 4px; }
-  .env-pill span, .status-text { display: none; }
+@media (max-width: 768px) {
+  /* Mobile header */
+  .site-header {
+    padding: 0 10px;
+    height: 48px;
+  }
+  .brand-name {
+    font-size: 14px;
+  }
+  .brand-name-ai {
+    font-size: 14px;
+  }
+  .brand-mark {
+    width: 28px;
+    height: 28px;
+  }
+  .env-pill span,
+  .status-text {
+    display: none;
+  }
+  .env-pill,
+  .system-status-indicator {
+    padding: 4px 8px;
+  }
+  .header-action-button span {
+    display: none;
+  }
+  .header-action-button {
+    padding: 6px 8px;
+  }
+  .header-actions-section {
+    gap: 4px;
+  }
+
+  /* KPI Ribbon */
+  .kpi-ribbon {
+    grid-template-columns: 1fr 1fr;
+    padding: 8px 10px;
+    gap: 8px;
+  }
+  .kpi-cell {
+    padding: 10px 12px;
+  }
+  .kpi-cell-num {
+    font-size: 20px;
+  }
+  .kpi-cell-label span:first-child {
+    font-size: 9px;
+  }
+  .kpi-click-hint {
+    display: none;
+  }
+
+  /* Sidebar as floating slide-over drawer */
+  .workspace-sidebar-pane {
+    position: fixed;
+    top: 48px;
+    left: 0;
+    bottom: 0;
+    width: 86vw;
+    max-width: 320px;
+    z-index: 1500;
+    box-shadow: 10px 0 40px rgba(0, 0, 0, 0.8);
+    background: rgba(3, 7, 18, 0.96);
+    border-right: 1px solid rgba(139, 92, 246, 0.3);
+  }
+  .sidebar-mobile-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    top: 48px;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 1400;
+  }
+
+  /* Map Panel */
+  .map-card-wrapper {
+    flex: 1 1 300px;
+    min-height: 280px;
+  }
+  .map-canvas-container {
+    min-height: 280px;
+  }
+  .map-floating-controls-top {
+    top: 8px;
+    right: 8px;
+    gap: 4px;
+  }
+  .map-seg-btn {
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+  .map-icon-toggle-btn {
+    padding: 4px 7px;
+    font-size: 10px;
+  }
+  .map-icon-toggle-btn span {
+    display: none;
+  }
+  .map-domain-hud {
+    display: none;
+  }
+  .map-coordinates-hud {
+    display: none;
+  }
+  .map-floating-legend {
+    bottom: 8px;
+    right: 8px;
+    max-width: 150px;
+  }
+  .legend-strip-header {
+    padding: 4px 8px;
+    font-size: 9px;
+  }
+
+  /* Dock and Cards */
+  .dock-grid-2col {
+    padding: 8px 10px;
+    gap: 10px;
+  }
+  .analytics-dock-toolbar {
+    padding: 10px 10px 6px;
+  }
+  .dock-tabs-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+  }
+  .dock-tab-btn {
+    padding: 6px 8px;
+    font-size: 11px;
+    text-align: center;
+  }
+  .detail-stat-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .risk-metrics-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .station-readouts-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  /* Footer */
+  .site-footer {
+    padding: 8px 10px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    font-size: 9px;
+  }
 }
 
 @media (max-width: 480px) {
-  .kpi-ribbon { grid-template-columns: 1fr; }
-  .kpi-cell-num { font-size: 22px; }
-  .map-floating-controls-top { flex-wrap: wrap; gap: 4px; }
+  .kpi-ribbon {
+    grid-template-columns: 1fr;
+  }
+  .detail-stat-grid {
+    grid-template-columns: 1fr;
+  }
+  .dock-tabs-group {
+    grid-template-columns: 1fr;
+  }
+  .info-modal-panel {
+    border-radius: 12px;
+    max-height: 94vh;
+  }
 }
