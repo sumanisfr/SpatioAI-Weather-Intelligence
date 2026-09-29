@@ -40,7 +40,7 @@ export function ModelRegistryCard({ health }: ModelRegistryCardProps) {
         </div>
         <div className="engine-badge">
           <CpuIcon size={13} className="inline mr-1 text-sky-400" />
-          <span>FastAPI Service (v{health?.version ?? '0.9.0'})</span>
+          <span>FastAPI Neural Engine</span>
         </div>
       </div>
 

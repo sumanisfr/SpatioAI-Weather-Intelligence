@@ -77,7 +77,6 @@ export function Header({
             <div className="brand-heading">
               <span className="brand-name">SPATIO</span>
               <span className="brand-name-ai">AI</span>
-              <span className="brand-version-pill">v{health?.version ?? '0.9.0'}</span>
             </div>
             <div className="brand-tagline">
               Meteorological Anomaly Tracking &bull; 12km &rarr; 5km

@@ -195,7 +195,7 @@ export function App() {
           <strong>SpatioAI Meteorological Intelligence Console</strong> &bull; Indian Subcontinent Basin (8&deg;N&ndash;28&deg;N, 68&deg;E&ndash;94&deg;E)
         </div>
         <div className="footer-right-info">
-          <span>FastAPI Backend <code>v{data.health?.version ?? '0.9.0'}</code> &bull; Mode: <code>synthetic_experimental_demo</code> &bull; Grid: <code>12km &rarr; 5km</code></span>
+          <span>FastAPI Backend &bull; Mode: <code>synthetic_experimental_demo</code> &bull; Grid: <code>12km &rarr; 5km</code></span>
         </div>
       </footer>
 
