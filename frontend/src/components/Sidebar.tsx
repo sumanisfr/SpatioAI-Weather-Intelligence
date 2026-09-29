@@ -12,6 +12,7 @@ type SidebarProps = {
   setExtremeOnly: (val: boolean | ((curr: boolean) => boolean)) => void
   trackFilter: string | null
   setTrackFilter: (val: string | null) => void
+  onClose?: () => void
 }
 
 type SortField = 'intensity' | 'area' | 'time'
@@ -26,6 +27,7 @@ export function Sidebar({
   setExtremeOnly,
   trackFilter,
   setTrackFilter,
+  onClose,
 }: SidebarProps) {
   const [query, setQuery] = useState('')
   const [sortBy, setSortBy] = useState<SortField>('intensity')
@@ -75,9 +77,22 @@ export function Sidebar({
           <span className="sidebar-eyebrow">ANOMALY DETECTOR</span>
           <h2 className="sidebar-title">Candidate Events</h2>
         </div>
-        <div className="sidebar-counter">
-          <span className="counter-current">{filteredEvents.length}</span>
-          <span className="counter-total">/{events.length}</span>
+        <div className="sidebar-top-right">
+          <div className="sidebar-counter">
+            <span className="counter-current">{filteredEvents.length}</span>
+            <span className="counter-total">/{events.length}</span>
+          </div>
+          {onClose && (
+            <button
+              className="sidebar-close-btn"
+              onClick={onClose}
+              title="Close Event Drawer"
+              aria-label="Close Event Drawer"
+              type="button"
+            >
+              &times;
+            </button>
+          )}
         </div>
       </div>
 

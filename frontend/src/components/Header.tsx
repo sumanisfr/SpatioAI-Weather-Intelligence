@@ -2,8 +2,6 @@ import type { KeyboardEvent } from 'react'
 import {
   RadarIcon,
   RefreshCwIcon,
-  InfoIcon,
-  ExternalLinkIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   CompassIcon,
@@ -16,9 +14,10 @@ type HeaderProps = {
   sidebarCollapsed: boolean
   onToggleSidebar: () => void
   onRefresh: () => void
-  onOpenInfo: () => void
   activeBasin?: string
   onSelectBasin?: (basinId: string) => void
+  canGoBack?: boolean
+  onGoBack?: () => void
 }
 
 export function Header({
@@ -27,9 +26,10 @@ export function Header({
   sidebarCollapsed,
   onToggleSidebar,
   onRefresh,
-  onOpenInfo,
   activeBasin = 'subcontinent',
   onSelectBasin,
+  canGoBack = false,
+  onGoBack,
 }: HeaderProps) {
   const isOnline = Boolean(health && health.status === 'ok')
 
@@ -37,9 +37,8 @@ export function Header({
     { id: 'subcontinent', label: 'All India' },
     { id: 'bay_of_bengal', label: 'Bay of Bengal' },
     { id: 'peninsular', label: 'Peninsular' },
+    { id: 'western_ghats', label: 'Western Ghats' },
   ]
-
-  const apiDocsUrl = `http://${typeof window !== 'undefined' && window.location.hostname ? window.location.hostname : '127.0.0.1'}:8000/docs`
 
   const handleKeyDown = (e: KeyboardEvent, action?: () => void) => {
     if (e.key === 'Enter' || e.key === ' ') {
@@ -50,8 +49,21 @@ export function Header({
 
   return (
     <header className="site-header" role="banner">
-      {/* Left: Brand Identity & Sidebar Toggle */}
+      {/* Left: Brand Identity & Navigation Controls */}
       <div className="header-brand-section">
+        {onGoBack && (
+          <button
+            className={`header-back-btn ${canGoBack ? 'active' : 'idle'}`}
+            onClick={onGoBack}
+            title={canGoBack ? 'Return to previous selection/view' : 'Reset to default basin & overview'}
+            aria-label="Go Back to Previous State"
+            type="button"
+          >
+            <ChevronLeftIcon size={15} />
+            <span className="header-back-label">Back</span>
+          </button>
+        )}
+
         <button
           className="sidebar-rail-btn"
           onClick={onToggleSidebar}
@@ -107,16 +119,14 @@ export function Header({
 
       {/* Right: Environment, Status, and Global Actions */}
       <div className="header-actions-section">
-        {/* Environment Badge (Interactive to open architecture info) */}
-        <button
-          className="env-pill interactive"
-          onClick={onOpenInfo}
-          title="Click to review Research Sandbox Architecture &amp; Methodology"
-          type="button"
+        {/* Environment Badge */}
+        <div
+          className="env-pill"
+          title="SpatioAI Meteorological Research Sandbox"
         >
           <span className="env-dot" />
           <span>Research Sandbox</span>
-        </button>
+        </div>
 
         {/* Backend Connectivity Status (Interactive to poll health) */}
         <button
@@ -131,27 +141,6 @@ export function Header({
 
         {/* Action Controls */}
         <div className="action-button-group">
-          <button
-            className="header-action-button"
-            onClick={onOpenInfo}
-            title="Scientific Methodology &amp; System Architecture"
-            type="button"
-          >
-            <InfoIcon size={14} />
-            <span>Architecture</span>
-          </button>
-
-          <a
-            className="header-action-button"
-            href={apiDocsUrl}
-            target="_blank"
-            rel="noreferrer"
-            title="Open Interactive FastAPI Swagger Documentation"
-          >
-            <ExternalLinkIcon size={14} />
-            <span>API Docs</span>
-          </a>
-
           <button
             className={`header-action-button icon-only ${loading ? 'loading' : ''}`}
             onClick={onRefresh}

@@ -39,7 +39,7 @@ export function useDashboardData() {
           setLastUpdated(new Date())
           setLoading(false)
         }
-      } catch (err) {
+      } catch {
         if (!ignore) {
           // Graceful fallback to rich offline demo dataset so UI is fully functional
           setHealth(FALLBACK_HEALTH)
@@ -75,7 +75,7 @@ export function useDashboardData() {
       setTracks((trackRes as TrackListResponse).tracks)
       setSelectedId((curr) => curr ?? evList[0]?.event_id ?? null)
       setLastUpdated(new Date())
-    } catch (err) {
+    } catch {
       setHealth(FALLBACK_HEALTH)
       setEvents(FALLBACK_EVENTS)
       setTracks(FALLBACK_TRACKS)
@@ -100,6 +100,9 @@ export function useDashboardData() {
         ? riskThreshold
         : Math.max(25, Math.round(selectedEvent.max_intensity * 0.6))
 
+      setRiskLoading(true)
+      setRiskError(null)
+
       try {
         const res = await analyzeRisk(
           selectedEvent.event_id,
@@ -114,6 +117,7 @@ export function useDashboardData() {
         }
       } catch (err) {
         if (!isCancelled && !controller.signal.aborted) {
+          setRisk(null)
           setRiskError(err instanceof Error ? err.message : 'Risk analysis currently unavailable')
           setRiskLoading(false)
         }

@@ -6,56 +6,70 @@ import { MapPanel } from './components/MapPanel'
 import { EventDetail } from './components/EventDetail'
 import { TrackTimeline } from './components/TrackTimeline'
 import { RiskPanel } from './components/RiskPanel'
-import { ModelRegistryCard } from './components/ModelRegistryCard'
-import { DownscalingGate } from './components/DownscalingGate'
 import { LiveStationCard } from './components/LiveStationCard'
-import { InfoModal } from './components/InfoModal'
 import { ErrorBoundary } from './components/ErrorBoundary'
+import { RadarIcon, AlertTriangleIcon, ActivityIcon, ShieldAlertIcon } from './components/Icons'
+import { useEffect } from 'react'
 import { useDashboardData } from './hooks/useDashboardData'
+import { useNavigationState, type AnalysisTab } from './hooks/useNavigationState'
 import './App.css'
-
-type AnalysisTab = 'all' | 'telemetry' | 'risk' | 'models'
 
 export function App() {
   const data = useDashboardData()
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
-  const [infoModalOpen, setInfoModalOpen] = useState(false)
-  const [extremeOnly, setExtremeOnly] = useState(false)
-  const [trackFilter, setTrackFilter] = useState<string | null>(null)
-  const [activeBasin, setActiveBasin] = useState<string>('subcontinent')
-  const [analysisTab, setAnalysisTab] = useState<AnalysisTab>('all')
+  const nav = useNavigationState(data.selectedId)
+
+  // On mobile screens (<768px), sidebar starts collapsed to eliminate initial overlap
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth < 768
+    }
+    return false
+  })
+
+  const navSelectedId = nav.selectedId
+  const navSelectEvent = nav.selectEvent
+  const dataSelectedId = data.selectedId
+  const dataSetSelectedId = data.setSelectedId
+
+  // Synchronize nav.selectedId with data.setSelectedId
+  useEffect(() => {
+    if (navSelectedId && navSelectedId !== dataSelectedId) {
+      dataSetSelectedId(navSelectedId)
+    }
+  }, [navSelectedId, dataSelectedId, dataSetSelectedId])
+
+  // Synchronize when data loads initial event if nav doesn't have one
+  useEffect(() => {
+    if (dataSelectedId && !navSelectedId) {
+      navSelectEvent(dataSelectedId)
+    }
+  }, [dataSelectedId, navSelectedId, navSelectEvent])
 
   const handleSelectPeakEvent = () => {
     if (!data.events.length) return
     const peak = data.events.reduce((max, ev) => (ev.max_intensity > max.max_intensity ? ev : max), data.events[0])
-    data.setSelectedId(peak.event_id)
+    nav.selectEvent(peak.event_id)
+  }
+
+  const scrollToDiagnostics = (tab: AnalysisTab) => {
+    nav.setAnalysisTab(tab)
+    const el = document.querySelector('.analytics-dock-toolbar')
+    el?.scrollIntoView({ behavior: 'smooth' })
   }
 
   return (
     <div className="dashboard-app-root">
-      {/* Ambient Gradient Orbs (decorative, pointer-events-none) */}
-      <div style={{
-        position: 'fixed', top: '35%', left: '50%', transform: 'translate(-50%,-50%)',
-        width: '40vw', height: '40vw', borderRadius: '50%', pointerEvents: 'none', zIndex: 0,
-        background: 'radial-gradient(ellipse at center, rgba(59,130,246,0.05) 0%, transparent 70%)',
-      }} aria-hidden="true" />
-      <div style={{
-        position: 'fixed', top: '70%', left: '20%',
-        width: '30vw', height: '30vw', borderRadius: '50%', pointerEvents: 'none', zIndex: 0,
-        background: 'radial-gradient(ellipse at center, rgba(236,72,153,0.07) 0%, transparent 70%)',
-        animation: 'float-orb 25s ease-in-out infinite',
-      }} aria-hidden="true" />
-
-      {/* Top Header */}
+      {/* Top Header with Back Navigation */}
       <Header
         health={data.health}
         loading={data.loading}
         sidebarCollapsed={sidebarCollapsed}
         onToggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)}
         onRefresh={() => void data.refresh()}
-        onOpenInfo={() => setInfoModalOpen(true)}
-        activeBasin={activeBasin}
-        onSelectBasin={setActiveBasin}
+        activeBasin={nav.activeBasin}
+        onSelectBasin={nav.setActiveBasin}
+        canGoBack={nav.canGoBack || Boolean(nav.selectedId && data.events[0] && nav.selectedId !== data.events[0].event_id)}
+        onGoBack={nav.goBack}
       />
 
       {/* KPI Metric Ribbon */}
@@ -63,14 +77,14 @@ export function App() {
         events={data.events}
         tracks={data.tracks}
         selectedEvent={data.selectedEvent}
-        isExtremeFiltered={extremeOnly}
-        onToggleExtremeFilter={() => setExtremeOnly((prev) => !prev)}
+        isExtremeFiltered={nav.extremeOnly}
+        onToggleExtremeFilter={() => nav.setExtremeOnly((prev) => !prev)}
         onSelectPeakEvent={handleSelectPeakEvent}
-        onTrackClick={() => setAnalysisTab('risk')}
+        onTrackClick={() => scrollToDiagnostics('risk')}
         onResetFootprint={() => {
-          setActiveBasin('subcontinent')
-          setExtremeOnly(false)
-          setTrackFilter(null)
+          nav.setActiveBasin('subcontinent')
+          nav.setExtremeOnly(false)
+          nav.setTrackFilter(null)
         }}
       />
 
@@ -83,18 +97,19 @@ export function App() {
               events={data.events}
               selectedId={data.selectedId}
               onSelectEvent={(id) => {
-                data.setSelectedId(id)
+                nav.selectEvent(id)
                 // On mobile screens (<768px), auto-collapse drawer when user picks an event
-                if (window.innerWidth <= 768) {
+                if (typeof window !== 'undefined' && window.innerWidth <= 768) {
                   setSidebarCollapsed(true)
                 }
               }}
               loading={data.loading}
               error={data.error}
-              extremeOnly={extremeOnly}
-              setExtremeOnly={setExtremeOnly}
-              trackFilter={trackFilter}
-              setTrackFilter={setTrackFilter}
+              extremeOnly={nav.extremeOnly}
+              setExtremeOnly={nav.setExtremeOnly}
+              trackFilter={nav.trackFilter}
+              setTrackFilter={nav.setTrackFilter}
+              onClose={() => setSidebarCollapsed(true)}
             />
           </ErrorBoundary>
         </div>
@@ -117,8 +132,8 @@ export function App() {
               event={data.selectedEvent}
               track={data.selectedTrack}
               risk={data.risk}
-              onSelectEvent={data.setSelectedId}
-              activeBasin={activeBasin}
+              onSelectEvent={(id) => nav.selectEvent(id)}
+              activeBasin={nav.activeBasin}
             />
           </ErrorBoundary>
 
@@ -126,58 +141,49 @@ export function App() {
           <div className="analytics-dock-toolbar">
             <div className="dock-title-group">
               <span className="dock-eyebrow">METEOROLOGICAL INTELLIGENCE DOCK</span>
-              <h3 className="dock-title">Diagnostic Telemetry &amp; Models</h3>
+              <h3 className="dock-title">Diagnostic Telemetry, Risk &amp; Kinematics</h3>
             </div>
 
             <div className="dock-tabs-group" role="tablist" aria-label="Analysis section tabs">
               <button
-                className={`dock-tab-btn ${analysisTab === 'all' ? 'active' : ''}`}
-                onClick={() => setAnalysisTab('all')}
+                className={`dock-tab-btn ${nav.analysisTab === 'all' ? 'active' : ''}`}
+                onClick={() => nav.setAnalysisTab('all')}
                 role="tab"
-                aria-selected={analysisTab === 'all'}
+                aria-selected={nav.analysisTab === 'all'}
                 type="button"
               >
                 Comprehensive View
               </button>
               <button
-                className={`dock-tab-btn ${analysisTab === 'telemetry' ? 'active' : ''}`}
-                onClick={() => setAnalysisTab('telemetry')}
+                className={`dock-tab-btn ${nav.analysisTab === 'telemetry' ? 'active' : ''}`}
+                onClick={() => nav.setAnalysisTab('telemetry')}
                 role="tab"
-                aria-selected={analysisTab === 'telemetry'}
+                aria-selected={nav.analysisTab === 'telemetry'}
                 type="button"
               >
                 Telemetry &amp; Ground-Truth
               </button>
               <button
-                className={`dock-tab-btn ${analysisTab === 'risk' ? 'active' : ''}`}
-                onClick={() => setAnalysisTab('risk')}
+                className={`dock-tab-btn ${nav.analysisTab === 'risk' ? 'active' : ''}`}
+                onClick={() => nav.setAnalysisTab('risk')}
                 role="tab"
-                aria-selected={analysisTab === 'risk'}
+                aria-selected={nav.analysisTab === 'risk'}
                 type="button"
               >
-                Risk &amp; Trajectory
-              </button>
-              <button
-                className={`dock-tab-btn ${analysisTab === 'models' ? 'active' : ''}`}
-                onClick={() => setAnalysisTab('models')}
-                role="tab"
-                aria-selected={analysisTab === 'models'}
-                type="button"
-              >
-                Model Architecture
+                Uncertainty Risk &amp; Kinematics
               </button>
             </div>
           </div>
 
           {/* Analytical Panels in Balanced 2-Column Responsive Layout */}
-          {(analysisTab === 'all' || analysisTab === 'telemetry') && (
+          {(nav.analysisTab === 'all' || nav.analysisTab === 'telemetry') && (
             <div className="dock-grid-2col">
               <EventDetail event={data.selectedEvent} />
               <LiveStationCard event={data.selectedEvent} />
             </div>
           )}
 
-          {(analysisTab === 'all' || analysisTab === 'risk') && (
+          {(nav.analysisTab === 'all' || nav.analysisTab === 'risk') && (
             <div className="dock-grid-2col">
               <RiskPanel
                 risk={data.risk}
@@ -194,13 +200,6 @@ export function App() {
               />
             </div>
           )}
-
-          {(analysisTab === 'all' || analysisTab === 'models') && (
-            <div className="dock-grid-2col">
-              <ModelRegistryCard health={data.health} />
-              <DownscalingGate />
-            </div>
-          )}
         </main>
       </div>
 
@@ -214,11 +213,56 @@ export function App() {
         </div>
       </footer>
 
-      {/* Scientific Scope Modal */}
-      <InfoModal
-        isOpen={infoModalOpen}
-        onClose={() => setInfoModalOpen(false)}
-      />
+      {/* Mobile Bottom Navigation Bar (Visible on mobile screens <768px) */}
+      <nav className="mobile-bottom-nav" aria-label="Mobile quick navigation">
+        <button
+          className={`mobile-nav-btn ${sidebarCollapsed && nav.mobileView === 'map' ? 'active' : ''}`}
+          onClick={() => {
+            setSidebarCollapsed(true)
+            nav.setMobileView('map')
+            window.scrollTo({ top: 0, behavior: 'smooth' })
+          }}
+          type="button"
+        >
+          <RadarIcon size={16} />
+          <span>Radar Map</span>
+        </button>
+        <button
+          className={`mobile-nav-btn ${!sidebarCollapsed ? 'active' : ''}`}
+          onClick={() => {
+            setSidebarCollapsed((prev) => !prev)
+            nav.setMobileView('events')
+          }}
+          type="button"
+        >
+          <AlertTriangleIcon size={16} />
+          <span>Anomalies</span>
+        </button>
+        <button
+          className={`mobile-nav-btn ${nav.analysisTab === 'telemetry' && sidebarCollapsed ? 'active' : ''}`}
+          onClick={() => {
+            setSidebarCollapsed(true)
+            nav.setMobileView('telemetry')
+            scrollToDiagnostics('telemetry')
+          }}
+          type="button"
+        >
+          <ActivityIcon size={16} />
+          <span>Telemetry</span>
+        </button>
+        <button
+          className={`mobile-nav-btn ${nav.analysisTab === 'risk' && sidebarCollapsed ? 'active' : ''}`}
+          onClick={() => {
+            setSidebarCollapsed(true)
+            nav.setMobileView('risk')
+            scrollToDiagnostics('risk')
+          }}
+          type="button"
+        >
+          <ShieldAlertIcon size={16} />
+          <span>Risk &amp; Tracks</span>
+        </button>
+      </nav>
     </div>
   )
 }

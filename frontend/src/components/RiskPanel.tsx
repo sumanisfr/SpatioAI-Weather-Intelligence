@@ -134,15 +134,6 @@ export function RiskPanel({
                   <span className="bm-val">{selectedEvent.mean_intensity.toFixed(1)} <small>mm/h</small></span>
                 </div>
               </div>
-
-              <div className="baseline-train-hint">
-                <span className="text-xs text-slate-400">
-                  To train the Phase 6 diffusion model weights:
-                </span>
-                <code className="text-xs text-slate-300 font-mono bg-slate-900 px-2 py-1 rounded block mt-1">
-                  python scripts/train_diffusion.py --config configs/data.yaml
-                </code>
-              </div>
             </div>
           )}
         </div>

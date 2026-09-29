@@ -39,6 +39,7 @@ const BASIN_COORDS: Record<string, { center: [number, number]; zoom: number }> =
   subcontinent: { center: [19.5, 82.5], zoom: 5 },
   bay_of_bengal: { center: [17.0, 88.5], zoom: 6 },
   peninsular: { center: [14.0, 77.5], zoom: 6 },
+  western_ghats: { center: [18.5, 73.5], zoom: 6 },
 }
 
 function ViewportManager({
@@ -250,9 +251,9 @@ export function MapPanel({
               const isExtreme = ev.max_intensity >= 110
               const isHeavy = ev.max_intensity >= 80 && ev.max_intensity < 110
 
-              // Severity-distinct colors: extreme=red, high=orange, moderate=yellow
-              const color = isExtreme ? '#ef4444' : isHeavy ? '#f97316' : '#eab308'
-              const fillColor = isExtreme ? '#dc2626' : isHeavy ? '#ea6000' : '#ca8a04'
+              // Severity-distinct colors: extreme=red, severe=amber, moderate=cyan
+              const color = isExtreme ? '#ef4444' : isHeavy ? '#f59e0b' : '#38bdf8'
+              const fillColor = isExtreme ? '#dc2626' : isHeavy ? '#d97706' : '#0284c7'
 
               return (
                 <CircleMarker

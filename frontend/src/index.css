@@ -17,8 +17,8 @@ html, body, #root {
 
 body {
   background: #030712;
-  color: #f1f5f9;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #f8fafc;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -28,25 +28,25 @@ code, kbd, samp, pre {
 }
 
 /* ============================================================
-   CUSTOM SCROLLBARS — Glassmorphism Tint
+   CUSTOM SCROLLBARS — Atmospheric Cyan Tint
    ============================================================ */
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
-  background: rgba(139, 92, 246, 0.35);
+  background: rgba(14, 165, 233, 0.30);
   border-radius: 99px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(139, 92, 246, 0.6);
+  background: rgba(14, 165, 233, 0.55);
 }
 
 /* ============================================================
-   LEAFLET GLASS POPUP OVERRIDES
+   LEAFLET GLASS POPUP OVERRIDES — Deep Oceanic Navy
    ============================================================ */
 .leaflet-dark-container {
   height: 100%;
   width: 100%;
-  background: #04091a !important;
+  background: #050b17 !important;
 }
 
 .leaflet-container {
@@ -54,22 +54,22 @@ code, kbd, samp, pre {
 }
 
 .leaflet-popup-content-wrapper {
-  background: rgba(5, 15, 40, 0.92) !important;
+  background: rgba(6, 12, 24, 0.94) !important;
   backdrop-filter: blur(20px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
-  color: #f1f5f9 !important;
-  border: 1px solid rgba(139, 92, 246, 0.35) !important;
+  color: #f8fafc !important;
+  border: 1px solid rgba(56, 189, 248, 0.28) !important;
   border-radius: 12px !important;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05) inset !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65), 0 1px 0 rgba(255, 255, 255, 0.06) inset !important;
   padding: 0 !important;
 }
 
 .leaflet-popup-tip-container {
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
 }
 
 .leaflet-popup-tip {
-  background: rgba(5, 15, 40, 0.95) !important;
+  background: rgba(6, 12, 24, 0.96) !important;
 }
 
 .leaflet-popup-content {
@@ -79,37 +79,35 @@ code, kbd, samp, pre {
 
 .leaflet-popup-close-button {
   color: #94a3b8 !important;
-  font-size: 18px !important;
+  font-size: 16px !important;
   top: 8px !important;
   right: 10px !important;
 }
 
 .leaflet-popup-close-button:hover {
-  color: #a78bfa !important;
+  color: #38bdf8 !important;
 }
 
 /* Popup inner content */
 .leaflet-custom-popup {
-  padding: 14px 16px;
-  min-width: 180px;
+  padding: 12px 14px;
+  min-width: 190px;
 }
 
 .popup-header {
-  border-bottom: 1px solid rgba(139, 92, 246, 0.2);
-  padding-bottom: 8px;
-  margin-bottom: 10px;
+  border-bottom: 1px solid rgba(56, 189, 248, 0.16);
+  padding-bottom: 6px;
+  margin-bottom: 8px;
 }
 
 .popup-tag {
   display: block;
-  font-size: 9px;
-  letter-spacing: 0.12em;
+  font-size: 8.5px;
+  letter-spacing: 0.10em;
   font-weight: 700;
-  background: linear-gradient(90deg, #06b6d4, #8b5cf6);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  margin-bottom: 3px;
+  color: #38bdf8;
+  text-transform: uppercase;
+  margin-bottom: 2px;
 }
 
 .popup-header h3 {
@@ -122,8 +120,8 @@ code, kbd, samp, pre {
 
 .popup-body {
   display: grid;
-  gap: 5px;
-  font-size: 11px;
+  gap: 4px;
+  font-size: 10.5px;
 }
 
 .popup-row {
@@ -144,76 +142,46 @@ code, kbd, samp, pre {
 
 /* Leaflet tooltip glass */
 .leaflet-tooltip {
-  background: rgba(5, 15, 40, 0.9) !important;
-  backdrop-filter: blur(16px) !important;
-  border: 1px solid rgba(139, 92, 246, 0.3) !important;
+  background: rgba(6, 12, 24, 0.92) !important;
+  backdrop-filter: blur(14px) !important;
+  border: 1px solid rgba(56, 189, 248, 0.25) !important;
   border-radius: 8px !important;
-  color: #f1f5f9 !important;
-  padding: 6px 10px !important;
+  color: #f8fafc !important;
+  padding: 5px 9px !important;
   font-family: 'Inter', sans-serif !important;
-  font-size: 11px !important;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.4) !important;
+  font-size: 10.5px !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5) !important;
 }
 
-.leaflet-tooltip-top::before { border-top-color: rgba(139, 92, 246, 0.3) !important; }
-.leaflet-tooltip-bottom::before { border-bottom-color: rgba(139, 92, 246, 0.3) !important; }
-.leaflet-tooltip-left::before { border-left-color: rgba(139, 92, 246, 0.3) !important; }
-.leaflet-tooltip-right::before { border-right-color: rgba(139, 92, 246, 0.3) !important; }
+.leaflet-tooltip-top::before { border-top-color: rgba(56, 189, 248, 0.25) !important; }
+.leaflet-tooltip-bottom::before { border-bottom-color: rgba(56, 189, 248, 0.25) !important; }
+.leaflet-tooltip-left::before { border-left-color: rgba(56, 189, 248, 0.25) !important; }
+.leaflet-tooltip-right::before { border-right-color: rgba(56, 189, 248, 0.25) !important; }
 
 .map-tooltip-content { line-height: 1.4; }
 .tooltip-event-code {
   font-family: 'JetBrains Mono', monospace;
   font-weight: 700;
-  font-size: 11px;
-  color: #a78bfa;
+  font-size: 10.5px;
+  color: #38bdf8;
 }
 .tooltip-rate {
   font-weight: 600;
   color: #fbbf24;
 }
-.tooltip-area { color: #94a3b8; font-size: 10px; }
+.tooltip-area { color: #94a3b8; font-size: 9.5px; }
 
 /* ============================================================
-   ANIMATIONS
+   ANIMATIONS & KEYFRAMES
    ============================================================ */
-@keyframes radar-ping {
-  0%   { transform: scale(0.85); opacity: 0.9; }
-  70%  { transform: scale(2.5); opacity: 0; }
-  100% { transform: scale(2.5); opacity: 0; }
-}
-
-@keyframes float-orb {
-  0%, 100% { transform: translateY(0) scale(1); }
-  50%       { transform: translateY(-30px) scale(1.05); }
-}
-
-@keyframes gradient-shift {
-  0%   { background-position: 0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-@keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 8px rgba(6, 182, 212, 0.4); }
-  50%       { box-shadow: 0 0 20px rgba(6, 182, 212, 0.8); }
-}
-
 @keyframes spin {
   from { transform: rotate(0deg); }
   to   { transform: rotate(360deg); }
 }
 
 @keyframes fade-in-up {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: translateY(0); }
-}
-
-.radar-ping {
-  position: absolute;
-  inset: 0;
-  border-radius: 9999px;
-  background: rgba(6, 182, 212, 0.6);
-  animation: radar-ping 2.2s cubic-bezier(0, 0, 0.2, 1) infinite;
 }
 
 .animate-spin {
