@@ -12,11 +12,16 @@ class APISettings:
         with self.config_path.open("r", encoding="utf-8") as handle:
             self.config: Dict[str, Any] = yaml.safe_load(handle) or {}
         api_config = self.config.get("api", {})
-        self.host = api_config.get("host", "127.0.0.1")
-        self.port = int(api_config.get("port", 8000))
-        self.cors_origins = api_config.get("cors_origins", ["http://localhost:5173"])
-        self.device = self.config.get("inference", {}).get("device", "auto")
-        self.demo_mode = bool(api_config.get("demo_mode", True))
+        import os
+        self.host = os.getenv("HOST", api_config.get("host", "0.0.0.0" if os.getenv("PORT") else "127.0.0.1"))
+        self.port = int(os.getenv("PORT", api_config.get("port", 8000)))
+        env_cors = os.getenv("CORS_ORIGINS")
+        if env_cors:
+            self.cors_origins = [o.strip() for o in env_cors.split(",") if o.strip()]
+        else:
+            self.cors_origins = api_config.get("cors_origins", ["http://localhost:5173", "http://127.0.0.1:5173", "*"])
+        self.device = os.getenv("INFERENCE_DEVICE", self.config.get("inference", {}).get("device", "auto"))
+        self.demo_mode = os.getenv("DEMO_MODE", str(api_config.get("demo_mode", True))).lower() in ("true", "1", "yes")
         self.model_paths = {
             "gnn": self.config.get("models", {}).get("gnn_checkpoint", "models/spatiotemporal_gnn_best.pt"),
             "unet": self.config.get("models", {}).get("unet_checkpoint", "models/downscaler_unet_best.pt"),
