@@ -35,7 +35,8 @@ export function useDashboardData() {
           const evList = (eventRes as EventListResponse).events
           setEvents(evList)
           setTracks((trackRes as TrackListResponse).tracks)
-          setSelectedId((curr) => curr ?? evList[0]?.event_id ?? null)
+          const targetDefault = evList.find((e) => e.event_id.includes('003_02')) || evList[0]
+          setSelectedId((curr) => curr ?? targetDefault?.event_id ?? null)
           setLastUpdated(new Date())
           setLoading(false)
         }
@@ -45,8 +46,9 @@ export function useDashboardData() {
           setHealth(FALLBACK_HEALTH)
           setEvents(FALLBACK_EVENTS)
           setTracks(FALLBACK_TRACKS)
-          setSelectedId(FALLBACK_EVENTS[0].event_id)
-          setRisk(createFallbackRisk(FALLBACK_EVENTS[0]))
+          const fallbackDefault = FALLBACK_EVENTS.find((e) => e.event_id.includes('003_02')) || FALLBACK_EVENTS[0]
+          setSelectedId(fallbackDefault.event_id)
+          setRisk(createFallbackRisk(fallbackDefault))
           setLastUpdated(new Date())
           setError(null) // Clear fatal error so UI renders beautifully
           setLoading(false)

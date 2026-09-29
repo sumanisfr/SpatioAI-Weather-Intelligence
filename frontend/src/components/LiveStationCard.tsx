@@ -79,7 +79,7 @@ export function LiveStationCard({ event }: LiveStationCardProps) {
         <div className="flex items-center gap-2">
           <div className="station-source-tag">
             <SatelliteIcon size={12} className="text-emerald-400" />
-            <span>OpenWeather METAR</span>
+            <span>{weather?.source ? `${weather.source} Real Observation` : 'Physical Station Ground-Truth'}</span>
           </div>
           <button
             className="action-icon-btn-subtle"
