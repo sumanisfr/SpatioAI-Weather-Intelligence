@@ -53,11 +53,25 @@ function ViewportManager({
   const map = useMap()
   const prevEventIdRef = useRef<string | null>(null)
   const prevBasinRef = useRef<string | undefined>(activeBasin)
+  const isFirstMountRef = useRef<boolean>(true)
 
   useEffect(() => {
-    // Invalidate map size on initial mount and resize
-    map.invalidateSize()
-  }, [map])
+    // Invalidate map size on initial mount and resize to ensure correct pixel dimensions
+    const timer = setTimeout(() => {
+      map.invalidateSize()
+      if (isFirstMountRef.current) {
+        isFirstMountRef.current = false
+        if (event) {
+          prevEventIdRef.current = event.event_id
+          map.setView([event.centroid_lat, event.centroid_lon], 6)
+        } else if (activeBasin && BASIN_COORDS[activeBasin]) {
+          const b = BASIN_COORDS[activeBasin]
+          map.setView(b.center, b.zoom)
+        }
+      }
+    }, 150)
+    return () => clearTimeout(timer)
+  }, [map, event, activeBasin])
 
   useEffect(() => {
     if (targetOverride) {
