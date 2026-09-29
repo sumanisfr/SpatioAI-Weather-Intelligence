@@ -129,13 +129,13 @@ export function Header({
           onKeyDown={(e) => handleKeyDown(e, () => onSelectBasin?.('bay_of_bengal'))}
           role="button"
           tabIndex={0}
-          title="SpatioAI Meteorological Anomaly Tracking"
+          title="Sanket Meteorological Anomaly Tracking"
         >
           <div className="brand-mark-circle">
             <RadarIcon size={20} className="brand-mark-icon" />
           </div>
           <div className="brand-meta">
-            <h1 className="brand-name">SpatioAI</h1>
+            <h1 className="brand-name">Sanket</h1>
             <span className="brand-tagline">
               Meteorological Anomaly Tracking &bull; 12km &rarr; 5km
             </span>
@@ -220,7 +220,7 @@ export function Header({
           onClick={onRunAnalysis || onRefresh}
           disabled={loading}
           type="button"
-          title="Execute SpatioAI Neural Anomaly Tracking Pipeline"
+          title="Execute Sanket Neural Anomaly Tracking Pipeline"
         >
           <PlayIcon size={13} className="run-icon" />
           <span>{loading ? 'Analyzing...' : 'Run Analysis'}</span>

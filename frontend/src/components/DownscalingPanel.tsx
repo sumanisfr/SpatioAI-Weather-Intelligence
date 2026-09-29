@@ -82,9 +82,9 @@ export function DownscalingPanel() {
           <span className="downscale-arrow">&rarr;</span>
         </div>
 
-        {/* Right: Output (5 km - SpatioAI) */}
+        {/* Right: Output (5 km - Sanket) */}
         <div className="downscale-col output-col">
-          <div className="downscale-col-title">Output (5 km &ndash; SpatioAI)</div>
+          <div className="downscale-col-title">Output (5 km &ndash; Sanket)</div>
           <div className="fine-swirl-box">
             <svg viewBox="0 0 160 140" className="fine-swirl-svg">
               <defs>

@@ -192,7 +192,7 @@ export function App() {
             </div>
             <div className="spatio-modal-body">
               <p className="text-xs text-slate-300 mb-3">
-                SpatioAI ingests multi-channel NWP grids and Doppler radar scans to run Spatio-Temporal Graph Neural Networks and Conditional Diffusion models.
+                Sanket ingests multi-channel NWP grids and Doppler radar scans to run Spatio-Temporal Graph Neural Networks and Conditional Diffusion models.
               </p>
               <div className="schema-key-val-grid">
                 <div className="schema-kv-row">

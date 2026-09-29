@@ -36,7 +36,7 @@ export function ModelBenchmarkRow() {
       {/* Panel 1: Model Performance */}
       <section className="benchmark-card" aria-label="Model Performance">
         <div className="benchmark-header">
-          <h3 className="benchmark-title">Model Performance (Before vs SpatioAI)</h3>
+          <h3 className="benchmark-title">Model Performance (Before vs Sanket)</h3>
           <div className="benchmark-legend">
             <span className="legend-item">
               <span className="legend-box" style={{ backgroundColor: '#38bdf8' }} />
@@ -44,7 +44,7 @@ export function ModelBenchmarkRow() {
             </span>
             <span className="legend-item">
               <span className="legend-box" style={{ backgroundColor: '#a855f7' }} />
-              SpatioAI (5 km)
+              Sanket (5 km)
             </span>
           </div>
         </div>
@@ -97,7 +97,7 @@ export function ModelBenchmarkRow() {
             </span>
             <span className="legend-item">
               <span className="legend-box" style={{ backgroundColor: '#a855f7' }} />
-              SpatioAI (5 km)
+              Sanket (5 km)
             </span>
           </div>
         </div>
@@ -150,7 +150,7 @@ export function ModelBenchmarkRow() {
             </span>
             <span className="legend-item">
               <span className="legend-box" style={{ backgroundColor: '#a855f7' }} />
-              GNN (SpatioAI)
+              GNN (Sanket)
             </span>
           </div>
         </div>

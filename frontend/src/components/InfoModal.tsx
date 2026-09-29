@@ -26,7 +26,7 @@ export function InfoModal({ isOpen, onClose }: InfoModalProps) {
             <div>
               <span className="modal-eyebrow">RESEARCH ARCHITECTURE</span>
               <h3 id="modal-title" className="modal-title">
-                SpatioAI Scientific Scope &amp; Pipeline
+                Sanket Scientific Scope &amp; Pipeline
               </h3>
               <p className="modal-subtitle">
                 Smart India Hackathon (SIH) Meteorological Research Prototype
@@ -52,7 +52,7 @@ export function InfoModal({ isOpen, onClose }: InfoModalProps) {
               <h4>Scientific Scope &amp; Operational Distinctions</h4>
             </div>
             <p className="modal-section-text">
-              SpatioAI is an experimental meteorological intelligence framework benchmarking AI-driven spatio-temporal tracking,
+              Sanket is an experimental meteorological intelligence framework benchmarking AI-driven spatio-temporal tracking,
               generative diffusion downscaling, and empirical threshold-exceedance risk quantification for extreme precipitation anomalies over India and the Bay of Bengal basin.
             </p>
             <ul className="modal-bullets-list">
@@ -119,7 +119,7 @@ export function InfoModal({ isOpen, onClose }: InfoModalProps) {
         {/* Modal Footer */}
         <div className="modal-footer-strip">
           <span className="modal-basin-note">
-            SpatioAI Meteorological Intelligence Console &bull; Indian Subcontinent Basin (8&deg;N&ndash;28&deg;N, 68&deg;E&ndash;94&deg;E)
+            Sanket Meteorological Intelligence Console &bull; Indian Subcontinent Basin (8&deg;N&ndash;28&deg;N, 68&deg;E&ndash;94&deg;E)
           </span>
           <button
             onClick={onClose}

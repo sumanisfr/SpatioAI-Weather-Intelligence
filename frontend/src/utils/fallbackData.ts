@@ -2,7 +2,7 @@ import type { Event, Track, RiskResponse, HealthResponse } from '../types/api'
 
 export const FALLBACK_HEALTH: HealthResponse = {
   status: 'ok',
-  service: 'SpatioAI',
+  service: 'Sanket',
   version: '1.0.0',
   models_loaded: true,
   models: {

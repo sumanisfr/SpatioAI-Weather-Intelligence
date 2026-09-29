@@ -32,9 +32,9 @@ def create_app(settings: APISettings | None = None) -> FastAPI:
         logger.info("SpatioAI API stopped")
 
     application = FastAPI(
-        title="SpatioAI API",
+        title="Sanket API",
         version="0.9.0",
-        description="Inference integration layer for the SpatioAI synthetic/experimental ML pipeline.",
+        description="Inference integration layer for the Sanket synthetic/experimental ML pipeline.",
         lifespan=lifespan,
     )
     application.add_middleware(
@@ -62,7 +62,7 @@ def create_app(settings: APISettings | None = None) -> FastAPI:
 
     @application.get("/", tags=["system"], summary="API root")
     def root():
-        return {"service": "SpatioAI", "version": "0.9.0", "api_version": "v1", "docs": "/docs"}
+        return {"service": "Sanket", "version": "0.9.0", "api_version": "v1", "docs": "/docs"}
 
     application.include_router(health.router)
     application.include_router(events.router)
